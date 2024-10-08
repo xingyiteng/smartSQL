@@ -1,0 +1,8 @@
+现在要实现一个功能，功能的描述如下：
+在SparkAIController类中，实现一个接口，该接口的入参是一个完整的MySQL的语句，现在需要执行这个SQL语句，语句有可能是insert、select、update、delete等。接口的功能是需要连接到指定的数据库，并执行这个SQL，最后返回执行结果
+
+
+
+
+
+
