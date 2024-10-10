@@ -35,6 +35,6 @@ public class DatabaseController extends CommonController {
     @GetMapping("/getTableDDL")
     public ResponseResult<?> getTableDDL(@RequestParam String databaseName, @RequestParam String tableName) {
         String ddl = databaseService.getTableDDL(databaseName, tableName);
-        return ResponseResult.success(ddl);
+        return ResponseResult.success(ddl, "OK");
     }
 }
