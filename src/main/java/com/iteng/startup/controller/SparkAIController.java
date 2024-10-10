@@ -1,5 +1,6 @@
 package com.iteng.startup.controller;
 
+import com.iteng.startup.common.ResponseResult;
 import com.iteng.startup.model.dto.spark.ExeDto;
 import com.iteng.startup.model.dto.spark.GenDto;
 import com.iteng.startup.model.entity.TableInfo;
@@ -25,32 +26,36 @@ public class SparkAIController {
      * @throws Exception
      */
     @PostMapping("/gen-sql")
-    public String chat(@RequestBody GenDto dto) throws Exception {
-        return sparkAIService.chat(dto.getMessage(), dto.getLists());
+    public ResponseResult<?> genSql(@RequestBody GenDto dto) throws Exception {
+        String sql = sparkAIService.genSql(dto.getMessage(), dto.getLists());
+        return ResponseResult.success(sql, "OK");
     }
 
     /**
      * 执行sql
      */
     @PostMapping("/exe-sql")
-    public String executeSql(@RequestBody ExeDto dto){
-        return sparkAIService.executeSql(dto.getSql(), dto.getDatabaseName());
+    public ResponseResult<?> executeSql(@RequestBody ExeDto dto){
+        String res = sparkAIService.executeSql(dto.getSql(), dto.getDatabaseName());
+        return ResponseResult.success(res, "OK");
     }
 
     /**
      * sql优化
      */
     @PostMapping("/optimize-sql")
-    public String optimizeSql(@RequestBody ExeDto dto){
-        return sparkAIService.optimizeSql(dto.getSql(), dto.getDatabaseName());
+    public ResponseResult<?> optimizeSql(@RequestBody ExeDto dto){
+        String res = sparkAIService.optimizeSql(dto.getSql(), dto.getDatabaseName());
+        return ResponseResult.success(res, "OK");
     }
 
     /**
      * explain结果
      */
     @PostMapping("/explain-sql")
-    public String explainSql(@RequestBody ExeDto dto){
-        return sparkAIService.explainSql(dto.getSql(), dto.getDatabaseName());
+    public ResponseResult<?> explainSql(@RequestBody ExeDto dto){
+        String res = sparkAIService.explainSql(dto.getSql(), dto.getDatabaseName());
+        return ResponseResult.success(res, "OK");
     }
 
     /**
@@ -58,8 +63,8 @@ public class SparkAIController {
      * @return
      */
     @PostMapping("/terminate")
-    public String terminateChat() {
-        boolean terminated = sparkAIService.terminateChat();
-        return terminated ? "Chat terminated successfully" : "No active chat to terminate";
+    public ResponseResult<?> terminateChat() {
+        boolean res = sparkAIService.terminateChat();
+        return ResponseResult.success(res, "OK");
     }
 }

@@ -1,7 +1,6 @@
 package com.iteng.startup.service;
 
 import com.iteng.startup.model.dto.connection.DbConnectionDto;
-import com.iteng.startup.model.entity.TableInfo;
 
 import java.util.List;
 import java.util.Map;

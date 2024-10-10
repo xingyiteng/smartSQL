@@ -1,5 +1,6 @@
 package com.iteng.startup.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,10 +19,12 @@ import springfox.documentation.spring.web.plugins.Docket;
  */
 @Configuration
 @Profile({"dev"})
+@Slf4j
 public class SwaggerConfig {
 
     @Bean(value = "swaggerApi2")
     public Docket defaultApi2() {
+        log.info("Swagger：http://localhost:8080/api/doc.html");
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()

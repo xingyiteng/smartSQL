@@ -1,9 +1,11 @@
 package com.iteng.startup.service.impl;
 
+import com.iteng.startup.exception.BusinessException;
 import com.iteng.startup.model.dto.connection.DbConnectionDto;
 import com.iteng.startup.model.entity.TableInfo;
 import com.iteng.startup.service.DatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Service;
@@ -12,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.iteng.startup.common.ErrorCode.NOT_FOUND_ERROR;
 
 @Service
 public class DatabaseServiceImpl implements DatabaseService {
@@ -35,7 +39,12 @@ public class DatabaseServiceImpl implements DatabaseService {
         JdbcTemplate template = new JdbcTemplate(dataSource);
 
         // 查询用户拥有权限的数据库
-        List<String> databases = template.queryForList("SELECT schema_name FROM schemata", String.class);
+        List<String> databases = null;
+        try {
+            databases = template.queryForList("SELECT schema_name FROM schemata", String.class);
+        } catch (DataAccessException e) {
+            throw new BusinessException(NOT_FOUND_ERROR, "请检查用户名或密码是否正确");
+        }
 
         // 查询每个数据库中的表
         List<TableInfo> list = new ArrayList<>();
@@ -59,7 +68,13 @@ public class DatabaseServiceImpl implements DatabaseService {
     @Override
     public String getTableDDL(String databaseName, String tableName) {
         String sql = "SHOW CREATE TABLE " + databaseName + "." + tableName;
-        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getString(2));
+        String res = "";
+        try {
+            res = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getString(2));
+        } catch (DataAccessException e) {
+            throw new BusinessException(NOT_FOUND_ERROR, "请检查数据库名或表名是否存在");
+        }
+        return res;
     }
 
 

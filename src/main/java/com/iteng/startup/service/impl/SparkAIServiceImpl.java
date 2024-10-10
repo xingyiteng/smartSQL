@@ -5,6 +5,7 @@ import com.alibaba.druid.sql.ast.SQLStatement;
 import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlSchemaStatVisitor;
 import com.alibaba.druid.util.JdbcConstants;
 import com.alibaba.fastjson.JSON;
+import com.iteng.startup.exception.BusinessException;
 import com.iteng.startup.model.entity.TableInfo;
 import com.iteng.startup.service.DatabaseService;
 import com.iteng.startup.service.SparkAIService;
@@ -22,6 +23,9 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.iteng.startup.common.ErrorCode.NOT_FOUND_ERROR;
+import static com.iteng.startup.common.ErrorCode.OPERATION_ERROR;
+
 @Service
 public class SparkAIServiceImpl implements SparkAIService {
     public static final String hostUrl = "https://spark-api.xf-yun.com/v3.5/chat";
@@ -33,7 +37,7 @@ public class SparkAIServiceImpl implements SparkAIService {
     private DatabaseService databaseService;
 
     @Override
-    public String chat(String msg, List<TableInfo> lists) {
+    public String genSql(String msg, List<TableInfo> lists) {
         String res = "";
         StringBuilder ddl = new StringBuilder();
         if (!lists.isEmpty()) {
@@ -119,9 +123,7 @@ public class SparkAIServiceImpl implements SparkAIService {
                     throw new SQLException("不支持的SQL操作类型");
             }
         } catch (SQLException e) {
-            Map<String, String> errorMap = new HashMap<>();
-            errorMap.put("error", "执行SQL时发生错误: " + e.getMessage());
-            return JSON.toJSONString(errorMap);
+            throw new BusinessException(OPERATION_ERROR, "执行SQL发生错误：" + e.getMessage());
         }
     }
 
@@ -175,7 +177,7 @@ public class SparkAIServiceImpl implements SparkAIService {
             SparkSyncChatResponse chatResponse = sparkClient.chatSync(sparkRequest);
             res = chatResponse.getContent();
         } catch (SparkException e) {
-            System.out.println("发生异常了：" + e.getMessage());
+            throw new BusinessException(OPERATION_ERROR, "当前操作失败，请稍后重试");
         }
         return res;
     }

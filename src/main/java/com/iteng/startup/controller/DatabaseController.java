@@ -24,7 +24,7 @@ public class DatabaseController extends CommonController {
      * @throws Exception
      */
     @PostMapping("/connect")
-    public ResponseResult<?> connectAndGetTables(@RequestBody DbConnectionDto dto) throws Exception {
+    public ResponseResult<?> connect(@RequestBody DbConnectionDto dto) throws Exception {
         Map<String, List<String>> tables = databaseService.getTablesFromMySQL(dto);
         return ResponseResult.success(tables);
     }
@@ -33,7 +33,8 @@ public class DatabaseController extends CommonController {
      * 获取DDL
      */
     @GetMapping("/getTableDDL")
-    public String getTableDDL(@RequestParam TableInfo tableInfo) {
-        return databaseService.getTableDDL(tableInfo.getDatabaseName(), tableInfo.getTableName());
+    public ResponseResult<?> getTableDDL(@RequestParam String databaseName, @RequestParam String tableName) {
+        String ddl = databaseService.getTableDDL(databaseName, tableName);
+        return ResponseResult.success(ddl);
     }
 }

@@ -5,7 +5,7 @@ import com.iteng.startup.model.entity.TableInfo;
 import java.util.List;
 
 public interface SparkAIService {
-    String chat(String message, List<TableInfo> lists) throws Exception;
+    String genSql(String message, List<TableInfo> lists) throws Exception;
     boolean terminateChat();
 
     String executeSql(String sql, String databaseName);
